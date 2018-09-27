@@ -94,6 +94,11 @@ for (( batch_start_block=$start_block; batch_start_block <= $end_block; batch_st
     python3 export_blocks_and_transactions.py --start-block=${batch_start_block} --end-block=${batch_end_block} --provider-uri="${provider_uri}" --blocks-output=${blocks_file} --transactions-output=${transactions_file}
     quit_if_returned_error
 
+    # TODO: Export to parquet as well as CSV if parquet flag is on
+    blocks_file_parquet=${blocks_output_dir}/blocks_${file_name_suffix}.parquet
+    # TODO: Eric to implement csv2parquet.py
+    python3 csv2parquet.py --input ${blocks_file} --output ${blocks_file_parquet} --schema blocks-schema.json
+
     ### token_transfers
 
     token_transfers_output_dir=${output_dir}/token_transfers${partition_dir}
@@ -164,6 +169,9 @@ for (( batch_start_block=$start_block; batch_start_block <= $end_block; batch_st
 
     end_time=$(date +%s)
     time_diff=$((end_time-start_time))
+
+    # TODO: Clean up CSV files if you don't want to keep them around
+    # ...
 
     log "Exporting blocks ${block_range} took ${time_diff} seconds"
 done
